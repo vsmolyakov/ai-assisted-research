@@ -13,3 +13,19 @@ $$
 Here, $\epsilon_t$ is the step size; the minibatch gradient is scaled by $N/n$, and the Gaussian noise has covariance $\epsilon_t I$.
 
 ![SGLD diagnostic plots](sgld/figures/sgld_diagnostics.png)
+
+## Rectified Flow
+
+The paper [“Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow”](https://arxiv.org/pdf/2209.03003) proposes rectified flow, a generative modeling approach that learns to transport samples from a source distribution to a target distribution along nearly straight trajectories. It constructs linear interpolations between paired samples and trains a time-dependent velocity field to follow the endpoints’ displacement. Repeated rectification can straighten the trajectories further, reducing the number of numerical integration steps needed during sampling.
+
+Given source samples $X_0 \sim p_0$, target samples $X_1 \sim p_1$, and the linear interpolation $X_t=(1-t)X_0+tX_1$, rectified flow learns a velocity field $v_\theta(X_t,t)$ with
+
+$$
+\min_\theta \mathbb{E}_{X_0,X_1,t}\left[\left\|v_\theta(X_t,t)-(X_1-X_0)\right\|^2\right],
+\qquad
+\frac{dX_t}{dt}=v_\theta(X_t,t).
+$$
+
+Here, $X_1-X_0$ is the target direction for each interpolation, and the learned ODE transports $X_0$ toward $X_1$.
+
+![Rectified Flow sampling steps](rectified_flow/figures/07_sampling_steps.png)
